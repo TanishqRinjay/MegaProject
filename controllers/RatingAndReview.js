@@ -89,20 +89,20 @@ exports.getAverageRating = async (req, res) => {
         ]);
 
         //Return average rating
-        if(averageRating.length >0){
+        if (averageRating.length > 0) {
             return res.status(200).json({
                 success: true,
                 message: "Average rating fetched successfully",
                 averageRating: result[0].averageRating,
-            })
+            });
         }
 
         //if no rating/review exist
         return res.status(200).json({
             success: true,
             message: "Average rating is 0, no rating is provided till now",
-            averageRating: 0, 
-        })
+            averageRating: 0,
+        });
     } catch (err) {
         return res.status(500).json({
             success: false,
@@ -113,25 +113,24 @@ exports.getAverageRating = async (req, res) => {
 
 //getAllRating(not course specific but all)
 exports.getAllRating = async (req, res) => {
-    try{
+    try {
         const allRatingReviews = await RatingAndReview.find({})
-                                                            .sort({rating: 'desc'})
-                                                            .populate({
-                                                                path: 'user',
-                                                                select: 'firstName lastName email image',
-                                                            })
-                                                            .populate({
-                                                                path: 'course',
-                                                                select: 'courseName',
-                                                            })
-                                                            .exec()
+            .sort({ rating: "desc" })
+            .populate({
+                path: "user",
+                select: "firstName lastName email image",
+            })
+            .populate({
+                path: "course",
+                select: "courseName",
+            })
+            .exec();
         return res.status(200).json({
             success: true,
             message: "All reviews fetched successfully",
             allRatingReviews,
-        })
-
-    }catch(err){
+        });
+    } catch (err) {
         return res.status(500).json({
             success: false,
             message: "Unable to get all reviews",

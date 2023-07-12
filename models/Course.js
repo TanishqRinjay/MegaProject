@@ -6,7 +6,7 @@ const courseSchema = new mongoose.Schema({
         required: true,
     },
     instructor: {
-        type: mongoose.Schema.Types.ObjectIdentity,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true,
     },
@@ -38,7 +38,7 @@ const courseSchema = new mongoose.Schema({
         required: true,
     },
     tag:{
-        type:[string],
+        type:[String],
         required: true
     },
     category: {

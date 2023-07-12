@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
 
-//Send mail to User
+//TODO: Send mail to User
 exports.contanctUsMail = async (req, res) => {
     try {
         //Fetching user id from auth token
@@ -26,7 +26,7 @@ exports.contanctUsMail = async (req, res) => {
         Phone No. : ${phoneNo} (${userDetails.phoneNo}) <br>
         message: ${message}`
         const managerMailId = "tanishqbaranwal@gmail.com"
-        
+
         //Sending mail to StudyNotion manager
         await mailSender(managerMailId, managerMailTitle, managerMailData)
 

@@ -26,6 +26,7 @@ exports.contanctUsMail = async (req, res) => {
         Phone No. : ${phoneNo} (${userDetails.phoneNo}) <br>
         message: ${message}`
         const managerMailId = "tanishqbaranwal@gmail.com"
+        
         //Sending mail to StudyNotion manager
         await mailSender(managerMailId, managerMailTitle, managerMailData)
 

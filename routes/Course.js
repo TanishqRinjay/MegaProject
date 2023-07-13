@@ -22,6 +22,7 @@ const {
 const {
     createSection,
     updateSection,
+    showAllSections,
     deleteSection,
 } = require("../controllers/Section");
 
@@ -57,6 +58,8 @@ router.post("/createCourse", auth, isInstructor, createCourse);
 router.post("/addSection", auth, isInstructor, createSection);
 // Update a Section
 router.post("/updateSection", auth, isInstructor, updateSection);
+// Show all sections
+router.post("/showAllSections", auth, isInstructor, showAllSections);
 // Delete a Section
 router.post("/deleteSection", auth, isInstructor, deleteSection);
 // Edit Sub Section

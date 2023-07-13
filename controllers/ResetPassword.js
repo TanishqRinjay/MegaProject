@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
 const bcrypt = require("bcrypt")
+const crypto = require("crypto");
 
 //resetPasswordTokenGenerator OR resetPassLinkGenerator
 exports.resetPasswordToken = async (req, res) => {
@@ -29,7 +30,7 @@ exports.resetPasswordToken = async (req, res) => {
         );
         //Create a url for resetting password
         const url = `https://localhost:3000/update-password/${token}`;
-        const mailBody = `<p>Click here to reset your password: {url}</p>`;
+        const mailBody = `<p>Click here to reset your password: ${url}</p>`;
         await mailSender(email, "Password reset link", mailBody);
         return res.status(200).json({
             success: true,
@@ -41,6 +42,7 @@ exports.resetPasswordToken = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Something went wrong in tokenizing reset password URL",
+            error: err.message
         });
     }
 };
@@ -50,7 +52,7 @@ exports.resetPasswordToken = async (req, res) => {
 exports.resetPassword = async (req, res) => {
     try{
         //fetch data from req.body
-    const {token, password, resetPassword} = req.body;
+    const {token, password, confirmPassword} = req.body;
 
     //Validation
     if(password !== confirmPassword) {
@@ -61,7 +63,7 @@ exports.resetPassword = async (req, res) => {
     }
 
     //get user details via token
-    const userDetails = await User.findOne(token);
+    const userDetails = await User.findOne({token:token});
     if(!userDetails) {
         return res.status(400).json({
             success: false,
@@ -92,6 +94,7 @@ exports.resetPassword = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Something went wrong in resetting password",
+            error: err.message
         });
     }
 

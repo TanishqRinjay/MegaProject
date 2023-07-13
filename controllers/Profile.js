@@ -55,6 +55,7 @@ exports.updateProfile = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Profile updated successfully",
+            profileDetails
         });
     } catch (err) {
         return res.status(500).json({
@@ -70,7 +71,7 @@ exports.deleteProfile = async (req, res) => {
     try {
         //Fetch data
         const id = req.user.id;
-
+        console.log(id)
         //Validate Id
         const userDetails = await User.findById(id);
         if (!userDetails) {
@@ -80,19 +81,13 @@ exports.deleteProfile = async (req, res) => {
             });
         }
 
-        //Retrieving Profile Id by User Id
-        const profileId = userDetails.additionalDetails;
-        const profileDetails = await Profile.findById(profileId);
-        if (!profileDetails) {
-            return res.status(400).json({
-                success: false,
-                message: "Invalid Profile Id",
-            });
-        }
         //Delete account
-        await Profile.findByIdAndDelete(profileId);
+        //First we're deleting User's profile additional Details
+        await Profile.findByIdAndDelete(userDetails.additionalDetails);
         //TODO: Unenroll courses of the user whose id is to delete
         //Removing profile from course
+
+        //Now we're deleting all details of the User
         await User.findByIdAndDelete(id);
         return res.status(200).json({
             success: true,
@@ -121,6 +116,7 @@ exports.getAllUserDetails = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "User details fetched successfully",
+            userDetails
         });
     } catch (err) {
         return res.status(500).json({

@@ -1,4 +1,5 @@
 const Category = require("../models/Categories");
+const Course = require("../models/Course");
 
 //Handler function
 exports.createCategory = async (req, res) => {
@@ -62,7 +63,7 @@ exports.categoryPageDetails = async (req, res) => {
 
         //get courses for specified category ID
         const selectedCategory = await Category.findById(categoryId)
-            .populate("courses")
+            .populate("course")
             .exec();
 
         //Validation
@@ -77,13 +78,13 @@ exports.categoryPageDetails = async (req, res) => {
         const differentCategories = await Category.find({
             _id: { $ne: categoryId },
         })
-            .populate("courses")
+            .populate("course")
             .exec();
 
         //Get Top selling courses
-        //TODO: Check with bhaiya
+        //TODO: Check with bhaiya, try uncommenting .sort when you make studentEnrollment
         const topSellingCourses = await Course.find({})
-            .sort({ $size: "studentsEnrolled" })
+            // .sort({ $size: "studentsEnrolled" })
             .limit(10)
             .exec();
 
@@ -99,6 +100,7 @@ exports.categoryPageDetails = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "unable to fetch category",
+            error: err.message
         });
     }
 };

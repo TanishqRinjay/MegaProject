@@ -1,6 +1,6 @@
 const SubSection = require("../models/SubSection");
 const Section = require("../models/Section");
-const uploadFileToCloudinary = require("../utils/fileUploader");
+const {uploadFileToCloudinary} = require("../utils/fileUploader");
 
 //SubSection creation
 exports.createSubSection = async (req, res) => {
@@ -33,6 +33,7 @@ exports.createSubSection = async (req, res) => {
             videoUrl: uploadDetails.secure_url,
         });
 
+        console.log(subSectionDetails)
         //Update Section with new Sub Section via Section ID
         const updatedSection = await Section.findByIdAndUpdate(
             sectionId,
@@ -42,7 +43,8 @@ exports.createSubSection = async (req, res) => {
                 },
             },
             { new: true }
-        ).populate("subSection"); //Check this populate function, as it was in TODO
+        )
+        .populate("subSections"); //Check this populate function, as it was in TODO
         console.log(updatedSection);
 
         //Success response
@@ -94,9 +96,15 @@ exports.updateSubSection = async (req, res) => {
                 videoUrl: uploadDetails.secure_url,
             },
             { new: true }
-        ).populate("section");
+        )
         console.log(updatedSubSection);
-    } catch (err) {}
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Unable to update Sub-Section, Internal Error",
+            error: err.message,
+        })
+    }
 };
 
 //Delete SubSection( CHECK AS THIS WAS IN TODO )

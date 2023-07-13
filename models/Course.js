@@ -23,6 +23,9 @@ const courseSchema = new mongoose.Schema({
             ref: "Section",
         },
     ],
+    status:{
+        type: String,
+    },
     ratingAndReviews: [
         {
             type: mongoose.Schema.Types.ObjectId,

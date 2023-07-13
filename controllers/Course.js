@@ -8,11 +8,12 @@ require("dotenv").config();
 exports.createCourse = async (req, res) => {
     try {
         //Getting data and Thumbnail
-        const {
+        let {
             courseName,
             courseDescription,
             price,
             tag,
+            status,
             whatYouWillLearn,
             category,
         } = req.body;
@@ -36,7 +37,9 @@ exports.createCourse = async (req, res) => {
 
         //Check for Instructor
         const userId = req.user.id;
-        const instructorDetails = await User.findOne(userId);
+        const instructorDetails = await User.findById(userId, {
+            accountType: "Instructor",
+        });
         console.log("Instructor details: ", instructorDetails);
         //TODO: Check if userId and instructorDetails._id are same?
 
@@ -49,7 +52,7 @@ exports.createCourse = async (req, res) => {
         }
 
         //Check if given tag is valid or not
-        const categoryDetails = await Category.findById(tag);
+        const categoryDetails = await Category.findById(category);
         if (!categoryDetails) {
             return res.status(404).json({
                 success: false,
@@ -63,6 +66,11 @@ exports.createCourse = async (req, res) => {
             process.env.FOLDER_NAME
         );
 
+        //Create status for course(published, draft etc)
+        if (!status || status === undefined) {
+            status = "Draft";
+        }
+
         //Create an entry for new course
         const newCourse = await Course.create({
             courseName,
@@ -70,6 +78,7 @@ exports.createCourse = async (req, res) => {
             price,
             tag: tag,
             whatYouWillLearn: whatYouWillLearn,
+            status,
             category: categoryDetails._id,
             instructor: instructorDetails._id,
             thumbnail: thumbnailImage.secure_url,
@@ -145,14 +154,14 @@ exports.getCourseDetails = async (req, res) => {
                 },
             })
             .populate("category")
-            .populate("ratingAndReviews")
+            // .populate("ratingAndReviews")
             .populate({
                 path: "courseContent",
-                populate: {
-                    path: "subSection",
-                },
+                // populate: {
+                //     path: "subSection",
+                // },
             })
-            .exec()
+            .exec();
         //Validation
         if (!courseDetails) {
             return res.status(400).json({
@@ -161,15 +170,15 @@ exports.getCourseDetails = async (req, res) => {
             });
         }
         return res.status(200).json({
-                    success: true,
-                    message: "Course fetched successfully",
-                    data: courseDetails,
-                });
+            success: true,
+            message: "Course fetched successfully",
+            data: courseDetails,
+        });
     } catch (err) {
-        console.log("Error in fetching course details: ", err)
+        console.log("Error in fetching course details: ", err);
         return res.status(500).json({
             success: true,
             message: err.message,
-        })
+        });
     }
 };

@@ -81,41 +81,73 @@ exports.updateSection = async (req, res) => {
 };
 
 // Show all Sections
-exports.showAllSections = async(req, res)=>{
-    try{
+exports.showAllSections = async (req, res) => {
+    try {
         //Fetch data
-        const {courseId} = req.body;
-        const allSections = await Course.findById(courseId).populate('courseContent')
-        
+        const { courseId } = req.body;
+        const getCourse = await Course.findById(courseId).populate({
+            path: "courseContent",
+            populate: {
+                path: "subSections",
+            },
+        });
+        const allSections = getCourse.courseContent;
         //return response
         return res.status(200).json({
-                    success: true,
-                    message: "All sections details fetched successfully",
-                    allSections,
-                });
-    }catch(err){
+            success: true,
+            message: "All sections details fetched successfully",
+            allSections,
+        });
+    } catch (err) {
         return res.status(500).json({
             success: false,
             message: "Unable to fetch all sections details",
             error: err.message,
         });
     }
-}
+};
 
 //Deleting a SubSection
 exports.deleteSection = async (req, res) => {
     try {
         //Fetch data
-        const { sectionId} = req.params;
+        const { courseId, sectionId } = req.body;
+        // console.log(courseId, sectionId);
+
+        //Validate data
+        if(!courseId || !sectionId){
+            return res.status(404).json({
+                success: false,
+                message: "All fields are required",
+            })
+        }
+
+        //Check if section exists or not
+        const sectionDetails = await Section.findById(sectionId);
+        if(!sectionDetails.sectionName){
+            return res.status(404).json({
+                success: false,
+                message: "Section with this ID does not exists",
+            })
+        }
+        console.log(sectionDetails)
+
+        //Deleting log of section from Course
+        const updatedCourseDetails = await Course.findByIdAndUpdate(courseId, {
+            $pull: {
+                courseContent: sectionId,
+            },
+        },{new: true});
 
         //Deleting the Section
-        const deletedSection = await Section.findByIdAndDelete(sectionId);
-        
+        await Section.findByIdAndDelete(sectionId);
+
         //Success response
         return res.status(200).json({
             success: true,
             message: " Section deleted successfully",
-        })
+            updatedCourseDetails,
+        });
     } catch (err) {
         return res.status(500).json({
             success: false,

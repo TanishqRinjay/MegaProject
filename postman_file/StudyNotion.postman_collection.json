@@ -1,0 +1,1134 @@
+{
+	"info": {
+		"_postman_id": "9da25d2b-1b28-4987-be1d-2c1d7adabca6",
+		"name": "StudyNotion",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28017196"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\":\"Tanishq\",\r\n    \"lastName\":\"Rinjay\",\r\n    \"password\":\"Tanishq\",\r\n    \"confirmPassword\":\"Tanishq\",\r\n    \"email\":\"1rn21cs170.tanishqrinjay@gmail.com\",\r\n    \"accountType\":\"Instructor\",\r\n    \"otp\":\"727651\"\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_AUTH}}/signup",
+							"host": [
+								"{{BASE_AUTH}}"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"tanishqbaranwal@gmail.com\",\r\n    \"password\":\"Tanishq\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_AUTH}}/login",
+							"host": [
+								"{{BASE_AUTH}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Send OTP",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"1rn21cs170.tanishqrinjay@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_AUTH}}/sendotp",
+							"host": [
+								"{{BASE_AUTH}}"
+							],
+							"path": [
+								"sendotp"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "Delete User Profile",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_PROFILE}}/deleteProfile",
+							"host": [
+								"{{BASE_PROFILE}}"
+							],
+							"path": [
+								"deleteProfile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset Password Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"thunderboltz502@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_AUTH}}/reset-password-token",
+							"host": [
+								"{{BASE_AUTH}}"
+							],
+							"path": [
+								"reset-password-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\":\"123456\",\r\n    \"confirmPassword\":\"123456\",\r\n    \"token\":\"90d1abd3-ae6e-48bb-a038-ab1634d5e39a\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_AUTH}}/reset-password",
+							"host": [
+								"{{BASE_AUTH}}"
+							],
+							"path": [
+								"reset-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_PROFILE}}/getUserDetails",
+							"host": [
+								"{{BASE_PROFILE}}"
+							],
+							"path": [
+								"getUserDetails"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Additional Fields",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"about\": \"Hello, I am Tanishq, I'm Sophomore in RNSIT\",\r\n    \"contactNumber\": 125648959,\r\n    \"dateOfBirth\": \"31.01.2002\",\r\n    \"gender\":\"male\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_PROFILE}}/updateProfile",
+							"host": [
+								"{{BASE_PROFILE}}"
+							],
+							"path": [
+								"updateProfile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile Picture",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "displayPicture",
+									"type": "file",
+									"src": "/C:/Users/tanis/Downloads/image.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_PROFILE}}/updateDisplayPicture",
+							"host": [
+								"{{BASE_PROFILE}}"
+							],
+							"path": [
+								"updateDisplayPicture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile Picture Copy",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "displayPicture",
+									"type": "file",
+									"src": "/D:/Downloads/IMG_2691.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_PROFILE}}/instructorDashboard",
+							"host": [
+								"{{BASE_PROFILE}}"
+							],
+							"path": [
+								"instructorDashboard"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Courses",
+			"item": [
+				{
+					"name": "Category",
+					"item": [
+						{
+							"name": "Add New Category",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Web-Dev\",\r\n    \"description\": \"Babbar Bhaiya\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/createCategory",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"createCategory"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Category",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_COURSE}}/showAllCategories",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"showAllCategories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Category Copy",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"categoryId\":\"646365a0293144d50ae4b1e0\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/categoryPageDetails",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"categoryPageDetails"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Category wise page details",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"categoryId\": \"64afa60bdd4f00ea6af8f693\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/getCategoryPageDetails",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"getCategoryPageDetails"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Section",
+					"item": [
+						{
+							"name": "Create Section",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InByYW5heWd1cHRhbWFpbkBnbWFpbC5jb20iLCJpZCI6IjY0NmUyMWE4YTU0ZDkxYzg3YjU4YTc2NiIsImlhdCI6MTY4NDk0Mjk3MCwiZXhwIjoxNjg1MDI5MzcwfQ.EsvQuWLO0oHvxuFFAy2J29y1vS96CzhBCyTE6aF6N2Y",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sectionName\": \"Python - 2\",\r\n    \"courseId\": \"64afae36dcdcce8d943cf8a7\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/addSection",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"addSection"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Section",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sectionName\": \"JS Advance - II\",\r\n    \"sectionId\": \"646e2a2483c5ffe4a5f048b8\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/updateSection",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"updateSection"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Section",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sectionId\": \"6466676f241e51446843afd2\",\r\n    \"courseId\": \"64666768241e51446843afcd\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/deleteSection",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"deleteSection"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Show all Sections",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"courseId\": \"64afae36dcdcce8d943cf8a7\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/showAllSections",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"showAllSections"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Sub Section",
+					"item": [
+						{
+							"name": "Create Sub Section",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "sectionId",
+											"value": "64afb8d686fccb4ca077152a",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "Python-Pandas",
+											"type": "text"
+										},
+										{
+											"key": "timeDuration",
+											"value": "6:30",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "Introduction to Pyhton",
+											"type": "text"
+										},
+										{
+											"key": "videoFile",
+											"type": "file",
+											"src": "/C:/Users/tanis/Downloads/videoplayback.mp4"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/addSubSection",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"addSubSection"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Sub Section",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "sectionId",
+											"value": "64666a06241e51446843b01a",
+											"type": "text"
+										},
+										{
+											"key": "title",
+											"value": "Variables and Keywords",
+											"type": "text"
+										},
+										{
+											"key": "timeDuration",
+											"value": "6:30",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "Learn About Variable and Keywords",
+											"type": "text"
+										},
+										{
+											"key": "video",
+											"type": "file",
+											"src": "/C:/Users/saika/Videos/2023-04-16 20-14-20.mkv"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/updateSubSection",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"updateSubSection"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Sub Section",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"sectionId\": \"646669cf241e51446843b010\",\r\n    \"subSectionId\": \"64666a06241e51446843b01a\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_COURSE}}/deleteSubSection",
+									"host": [
+										"{{BASE_COURSE}}"
+									],
+									"path": [
+										"deleteSubSection"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create Course",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "thumbnailImage",
+									"type": "file",
+									"src": "/C:/Users/tanis/Downloads/course.jpg"
+								},
+								{
+									"key": "courseName",
+									"value": "Python",
+									"type": "text"
+								},
+								{
+									"key": "courseDescription",
+									"value": "Master Python by building 100 projects in 100 days. Learn data science, automation, build websites, games and apps!",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "4999999",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "64afa60bdd4f00ea6af8f693",
+									"type": "text"
+								},
+								{
+									"key": "whatYouWillLearn",
+									"value": "Kuch nhi",
+									"type": "text"
+								},
+								{
+									"key": "tag",
+									"value": "pyhton-bhai",
+									"type": "text"
+								},
+								{
+									"key": "instructions",
+									"value": "[\"a\",\"b\",\"c\",\"d\"]",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/createCourse",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"createCourse"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Edit Course Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiaXJwYWwyODIwMDJAZ21haWwuY29tIiwiaWQiOiI2NDYzNjIyNGM3NmJmY2NhMTVjOTljZTEiLCJpYXQiOjE2ODQyNDQzNjQsImV4cCI6MTY4NDMzMDc2NH0.on5fIA51H3DA0F-f_u3tyiZwkHj4cB0c715EmGGfNbU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "thumbnailImage",
+									"type": "file",
+									"src": "/C:/Users/Aritra Biswas/Downloads/nextjs-cover.jpg"
+								},
+								{
+									"key": "courseName",
+									"value": "Learn C++ Advance",
+									"type": "text"
+								},
+								{
+									"key": "courseDescription",
+									"value": "Master Python by building 100 projects in 100 days. Learn data science, automation, build websites, games and apps!",
+									"type": "text"
+								},
+								{
+									"key": "price",
+									"value": "899",
+									"type": "text"
+								},
+								{
+									"key": "tag",
+									"value": "Hello",
+									"type": "text"
+								},
+								{
+									"key": "whatYouWillLearn",
+									"value": "a,b,b,c",
+									"type": "text"
+								},
+								{
+									"key": "category",
+									"value": "64666724425a8ce9b9b5ea6b",
+									"type": "text"
+								},
+								{
+									"key": "courseId",
+									"value": "64666768241e51446843afcd",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/editCourse",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"editCourse"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_COURSE}}/getAllCourses",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"getAllCourses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a Course Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZpbW93aTk5NDVAZ2x1bWFyay5jb20iLCJpZCI6IjY0NWU4ZDZkZjdiNDQ4MTlmNGVlOTc2MCIsImlhdCI6MTY4Mzk4Nzk1OSwiZXhwIjoxNjgzOTk1MTU5fQ.W4LP6jumWy2zzN0OdMrXmNRaV6Fkyx65AugLPhuBw0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courseId\":\"64afae36dcdcce8d943cf8a7\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/getCourseDetails",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"getCourseDetails"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a Ful Course Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZpbW93aTk5NDVAZ2x1bWFyay5jb20iLCJpZCI6IjY0NWU4ZDZkZjdiNDQ4MTlmNGVlOTc2MCIsImlhdCI6MTY4Mzk4Nzk1OSwiZXhwIjoxNjgzOTk1MTU5fQ.W4LP6jumWy2zzN0OdMrXmNRaV6Fkyx65AugLPhuBw0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courseId\":\"647108f8eac761698a700ce1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/getFullCourseDetails",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"getFullCourseDetails"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buy Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZpbW93aTk5NDVAZ2x1bWFyay5jb20iLCJpZCI6IjY0NWU4ZDZkZjdiNDQ4MTlmNGVlOTc2MCIsImlhdCI6MTY4Mzk4Nzk1OSwiZXhwIjoxNjgzOTk1MTU5fQ.W4LP6jumWy2zzN0OdMrXmNRaV6Fkyx65AugLPhuBw0s",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_PAYMENT}}/capturePayment",
+							"host": [
+								"{{BASE_PAYMENT}}"
+							],
+							"path": [
+								"capturePayment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Enrolled Courses",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJhaHVsOTQzNDIyQGdtYWlsLmNvbSIsImlkIjoiNjQ2NjZkNzhhMTZkZWFhNGI0MmYxZDQxIiwiaWF0IjoxNjg0NTk0ODU2LCJleHAiOjE2ODQ2ODEyNTZ9.flBIg59squNFmXIzNoNcDNAszEb-TZRumA-PPCq_xwA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_PROFILE}}/getEnrolledCourses",
+							"host": [
+								"{{BASE_PROFILE}}"
+							],
+							"path": [
+								"getEnrolledCourses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Instructor Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete a Course",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courseId\":\"646ded8cffec41391f05b77f\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/deleteCourse",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"deleteCourse"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Course Progress",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courseId\": \"647108f8eac761698a700ce1\",\r\n    \"subsectionId\": \"64710912eac761698a700ceb\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/updateCourseProgress",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"updateCourseProgress"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get course progress",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNvdW15YWJhbmVyamVlNzgzQGdtYWlsLmNvbSIsImlkIjoiNjQ3MGZkMjdmZDc0MzFhNmI5OGI5MGUwIiwiaWF0IjoxNjg1MTgyMTc3LCJleHAiOjE2ODUyNjg1Nzd9.VmDDytsCNVRPLfR7KnMDpEmZxUR7ZSkScrq9bB-N4E0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courseId\": \"647108fa3044a774e61cd765\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/getProgressPercentage",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"getProgressPercentage"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rating and Review",
+			"item": [
+				{
+					"name": "Add a Rating and Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imd5ZmVseUBtYWlsaW5hdG9yLmNvbSIsImlkIjoiNjQ3MGZlMmQxOTJhYmFlZmRmNjkwNzgxIiwiaWF0IjoxNjg1MTM2NTU3LCJleHAiOjE2ODUyMjI5NTd9.ZhoRe-1WXkQvde71AtujRiyaEUZaZyZe9dglQmpqA60",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"rating\": 3.5,\r\n    \"review\": \"The Instructor Explains Very Nicely\",\r\n    \"courseId\": \"647108f8eac761698a700ce1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/createRating",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"createRating"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Average Rating",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courseId\":\"64591c3ba3d9bc75928a04bc\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/getAverageRating",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"getAverageRating"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Reviews",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"courseId\":\"64591c3ba3d9bc75928a04bc\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_COURSE}}/getReviews",
+							"host": [
+								"{{BASE_COURSE}}"
+							],
+							"path": [
+								"getReviews"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Capture Payment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000/api/v1/payment/capturePayment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"payment",
+						"capturePayment"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

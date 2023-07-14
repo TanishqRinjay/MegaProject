@@ -122,7 +122,7 @@ exports.deleteSubSection = async (req, res) => {
     try {
         //Fetch data
         const { sectionId, subSectionId } = req.body;
-        
+
         //Validate data
         if (!subSectionId || !sectionId) {
             return res.status(404).json({
@@ -133,7 +133,7 @@ exports.deleteSubSection = async (req, res) => {
 
         //Check if section exists or not
         const subSectionDetails = await SubSection.findById(subSectionId);
-        
+
         if (!subSectionDetails.title) {
             return res.status(404).json({
                 success: false,
@@ -147,6 +147,12 @@ exports.deleteSubSection = async (req, res) => {
             { $pull: { subSections: subSectionId } },
             { new: true }
         );
+        if (!updatedSectionDetails) {
+            return res.status(404).json({
+                success: false,
+                message: "Sub section with this ID does not exists",
+            });
+        }
 
         //Delete Sub Section
         await SubSection.findByIdAndDelete(subSectionId);

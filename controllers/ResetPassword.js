@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
 //resetPasswordTokenGenerator OR resetPassLinkGenerator
@@ -29,20 +29,20 @@ exports.resetPasswordToken = async (req, res) => {
             { new: true }
         );
         //Create a url for resetting password
-        const url = `https://localhost:3000/update-password/${token}`;
+        const url = `http://localhost:3000/update-password/${token}`;
         const mailBody = `<p>Click here to reset your password: ${url}</p>`;
         await mailSender(email, "Password reset link", mailBody);
         return res.status(200).json({
             success: true,
             message: "Password reset link has been sent to your email.",
             url: url,
-        })
+        });
     } catch (err) {
         console.log("Error in tokenizing reset password URL: ", err);
         return res.status(500).json({
             success: false,
             message: "Something went wrong in tokenizing reset password URL",
-            error: err.message
+            error: err.message,
         });
     }
 };
@@ -50,52 +50,56 @@ exports.resetPasswordToken = async (req, res) => {
 //reset Password
 
 exports.resetPassword = async (req, res) => {
-    try{
+    try {
         //fetch data from req.body
-    const {token, password, confirmPassword} = req.body;
+        const { token, password, confirmPassword } = req.body;
 
-    //Validation
-    if(password !== confirmPassword) {
-        return res.status(400).json({
-            success: false,
-            message: "Password and Confirm Password do not match",
-        });
-    }
+        //Validation
+        if (password !== confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Password and Confirm Password do not match",
+            });
+        }
 
-    //get user details via token
-    const userDetails = await User.findOne({token:token});
-    if(!userDetails) {
-        return res.status(400).json({
-            success: false,
-            message: "Invalid token",
-        });
-    }
-    if(userDetails.expiryTime < Date.now()) {
-        return res.status(400).json({
-            success: false,
-            message: "Link for resetting password is expired, please regenrate the link",
-        });
-    }
+        //get user details via token
+        const userDetails = await User.findOne({ token: token });
+        if (!userDetails) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid token",
+            });
+        }
+        if (userDetails.expiryTime < Date.now()) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    "Link for resetting password is expired, please regenrate the link",
+            });
+        }
 
-    //Hashing new password
-    const hashedPassword = await bcrypt.hash(password, 10)
+        //Hashing new password
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-    //TODO: check if userDetails works instead of finding again with User.findOneAndUpdate
-    //Password Update
-    await User.findOneAndUpdate({token:token}, {password:hashedPassword}, {new: true})
+        //TODO: check if userDetails works instead of finding again with User.findOneAndUpdate
+        //Password Update
+        await User.findOneAndUpdate(
+            { token: token },
+            { password: hashedPassword },
+            { new: true }
+        );
 
-    //Send success response
-    return res.status(200).json({
+        //Send success response
+        return res.status(200).json({
             success: true,
             message: "Password has been updated successfully",
-        })
-    }catch(err){
+        });
+    } catch (err) {
         console.log("Error in resetting password: ", err);
         return res.status(500).json({
             success: false,
             message: "Something went wrong in resetting password",
-            error: err.message
+            error: err.message,
         });
     }
-
-}
+};

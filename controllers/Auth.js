@@ -175,7 +175,7 @@ exports.login = async (req, res) => {
             });
         }
         //Check if user's email is registered
-        const user = await User.findOne({ email });
+        const user = await User.findOne({ email }).populate("additionalDetails").exec();
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -213,8 +213,7 @@ exports.login = async (req, res) => {
                 message: "Invalid credentials",
             });
         }
-        //last
-        //last
+
     } catch (err) {
         console.log("Error in logging in: ", err);
         res.status(500).json({

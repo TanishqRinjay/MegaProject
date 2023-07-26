@@ -1,7 +1,6 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/User");
-const { response } = require("express");
 
 //auth
 exports.auth = async (req, res, next) => {
@@ -10,7 +9,7 @@ exports.auth = async (req, res, next) => {
         const token =
             req.body.token ||
             req.cookies.token ||
-            req.header("Authorization").replace("Bearer", "");
+            req.header("Authorization")?.replace("Bearer ", "");
         //if token is missing
         if (!token) {
             return res.status(401).json({
@@ -21,7 +20,7 @@ exports.auth = async (req, res, next) => {
         //Token verification
         try {
             const decode = jwt.verify(token, process.env.JWT_SECRET);
-            console.log(decode);
+            console.log("Decode: ", decode);
             req.user = decode;
             console.log(req.user.accountType);
         } catch (err) {
@@ -35,6 +34,7 @@ exports.auth = async (req, res, next) => {
         return res.status(401).json({
             success: false,
             message: "Something went wrong while validating token",
+            error: err.message
         });
     }
 };

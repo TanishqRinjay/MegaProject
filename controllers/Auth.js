@@ -3,6 +3,8 @@ const Profile = require("../models/Profile");
 const OTP = require("../models/OTP");
 const otpGenerator = require("otp-generator");
 const bcrypt = require("bcrypt");
+const mailSender = require("../utils/mailSender");
+const { passwordUpdated } = require("../mail/templates/passwordUpdate");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
@@ -175,7 +177,9 @@ exports.login = async (req, res) => {
             });
         }
         //Check if user's email is registered
-        const user = await User.findOne({ email }).populate("additionalDetails").exec();
+        const user = await User.findOne({ email })
+            .populate("additionalDetails")
+            .exec();
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -213,7 +217,6 @@ exports.login = async (req, res) => {
                 message: "Invalid credentials",
             });
         }
-
     } catch (err) {
         console.log("Error in logging in: ", err);
         res.status(500).json({
@@ -230,11 +233,11 @@ exports.changePassword = async (req, res) => {
         const userDetails = await User.findById(req.user.id);
 
         // Get old password, new password, and confirm new password from req.body
-        const { oldPassword, newPassword, confirmNewPassword } = req.body;
+        const { currentPassword, newPassword } = req.body;
 
         // Validate old password
         const isPasswordMatch = await bcrypt.compare(
-            oldPassword,
+            currentPassword,
             userDetails.password
         );
         if (!isPasswordMatch) {
@@ -242,15 +245,6 @@ exports.changePassword = async (req, res) => {
             return res
                 .status(401)
                 .json({ success: false, message: "The password is incorrect" });
-        }
-
-        // Match new password and confirm new password
-        if (newPassword !== confirmNewPassword) {
-            // If new password and confirm new password do not match, return a 400 (Bad Request) error
-            return res.status(400).json({
-                success: false,
-                message: "The password and confirm password does not match",
-            });
         }
 
         // Update password
@@ -265,9 +259,10 @@ exports.changePassword = async (req, res) => {
         try {
             const emailResponse = await mailSender(
                 updatedUserDetails.email,
+                "Password changed",
                 passwordUpdated(
                     updatedUserDetails.email,
-                    `Password updated successfully for ${updatedUserDetails.firstName} ${updatedUserDetails.lastName}`
+                    `${updatedUserDetails.firstName} ${updatedUserDetails.lastName},`
                 )
             );
             console.log("Email sent successfully:", emailResponse.response);

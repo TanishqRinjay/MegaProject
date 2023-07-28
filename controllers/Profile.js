@@ -50,12 +50,14 @@ exports.updateProfile = async (req, res) => {
         profileDetails.contactNumber = contactNumber;
         profileDetails.gender = gender;
         await profileDetails.save();
+        const updatedUserDetails = await User.findById(id).populate("additionalDetails").exec()
+        updatedUserDetails.password = null;
 
         //Success response
         return res.status(200).json({
             success: true,
             message: "Profile updated successfully",
-            profileDetails
+            updatedUserDetails,
         });
     } catch (err) {
         return res.status(500).json({
@@ -143,7 +145,7 @@ exports.updateDisplayPicture = async (req, res) => {
             { _id: userId },
             { image: image.secure_url },
             { new: true }
-        );
+        ).populate("additionalDetails").exec();
         res.send({
             success: true,
             message: `Image Updated successfully`,

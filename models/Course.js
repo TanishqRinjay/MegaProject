@@ -23,7 +23,7 @@ const courseSchema = new mongoose.Schema({
             ref: "Section",
         },
     ],
-    status:{
+    status: {
         type: String,
     },
     ratingAndReviews: [
@@ -40,14 +40,17 @@ const courseSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    tag:{
-        type:[String],
+    tag: {
+        type: [String],
         required: true
+    },
+    instructions: {
+        type: [String],
     },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
-        // required: true,
+        required: true,
     },
     studentsEnrolled: [
         {

@@ -16,6 +16,7 @@ exports.createCourse = async (req, res) => {
             status,
             whatYouWillLearn,
             category,
+            instructions,
         } = req.body;
         const thumbnail = req.files.thumbnailImage;
 
@@ -27,11 +28,13 @@ exports.createCourse = async (req, res) => {
             !tag ||
             !whatYouWillLearn ||
             !category ||
+            !instructions||
             !thumbnail
         ) {
             return res.status(400).json({
                 success: false,
                 message: "Please fill all the fields",
+                
             });
         }
 
@@ -61,6 +64,7 @@ exports.createCourse = async (req, res) => {
         }
 
         //Thumbnail upload in cloudinary
+
         const thumbnailImage = await uploadFileToCloudinary(
             thumbnail,
             process.env.FOLDER_NAME
@@ -81,6 +85,7 @@ exports.createCourse = async (req, res) => {
             status,
             category: categoryDetails._id,
             instructor: instructorDetails._id,
+            instructions,
             thumbnail: thumbnailImage.secure_url,
         });
 

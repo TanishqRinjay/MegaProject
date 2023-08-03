@@ -26,7 +26,14 @@ exports.createSection = async (req, res) => {
                 },
             },
             { new: true }
-        ).populate("courseContent", "courseContent.subSection"); //Check populate function as this was in TODO
+        )
+            .populate({
+                path: "courseContent",
+                populate: {
+                    path: "subSections",
+                },
+            })
+            .exec(); //Check populate function as this was in TODO
         console.log(updatedCourseDetails);
 
         //Success message
@@ -63,7 +70,7 @@ exports.updateSection = async (req, res) => {
             sectionId,
             { sectionName: sectionName },
             { new: true }
-        );
+        ).populate("subSections")
 
         //Success response
         return res.status(200).json({
@@ -115,29 +122,38 @@ exports.deleteSection = async (req, res) => {
         // console.log(courseId, sectionId);
 
         //Validate data
-        if(!courseId || !sectionId){
+        if (!courseId || !sectionId) {
             return res.status(404).json({
                 success: false,
                 message: "All fields are required",
-            })
+            });
         }
 
         //Check if section exists or not
         const sectionDetails = await Section.findById(sectionId);
-        if(!sectionDetails.sectionName){
+        if (!sectionDetails.sectionName) {
             return res.status(404).json({
                 success: false,
                 message: "Section with this ID does not exists",
-            })
+            });
         }
-        console.log(sectionDetails)
+        console.log(sectionDetails);
 
         //Deleting log of section from Course
-        const updatedCourseDetails = await Course.findByIdAndUpdate(courseId, {
-            $pull: {
-                courseContent: sectionId,
+        const updatedCourseDetails = await Course.findByIdAndUpdate(
+            courseId,
+            {
+                $pull: {
+                    courseContent: sectionId,
+                },
             },
-        },{new: true});
+            { new: true }
+        ).populate({
+            path:"courseContent",
+            populate:{
+                path:"subSections"
+            }
+        })
 
         //Deleting the Section
         await Section.findByIdAndDelete(sectionId);

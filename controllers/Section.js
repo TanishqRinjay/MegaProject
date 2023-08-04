@@ -1,4 +1,5 @@
 const Section = require("../models/Section");
+const SubSection = require("../models/SubSection");
 const Course = require("../models/Course");
 
 //New Section creation
@@ -40,7 +41,7 @@ exports.createSection = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Section created successfully",
-            updatedCourseDetails,
+            data: updatedCourseDetails,
         });
     } catch (err) {
         return res.status(500).json({
@@ -55,10 +56,10 @@ exports.createSection = async (req, res) => {
 exports.updateSection = async (req, res) => {
     try {
         //Data fetching
-        const { sectionName, sectionId } = req.body;
+        const { sectionName, sectionId, courseId } = req.body;
 
         //Data validation
-        if (!sectionName || !sectionId) {
+        if (!sectionName || !sectionId || !courseId) {
             return res.status(400).json({
                 success: false,
                 message: "All fields are required",
@@ -70,13 +71,13 @@ exports.updateSection = async (req, res) => {
             sectionId,
             { sectionName: sectionName },
             { new: true }
-        ).populate("subSections")
+        );
 
         //Success response
         return res.status(200).json({
             success: true,
             message: "Section updates successfully",
-            updatedSection,
+            data: updatedSection,
         });
     } catch (err) {
         return res.status(500).json({
@@ -119,7 +120,6 @@ exports.deleteSection = async (req, res) => {
     try {
         //Fetch data
         const { courseId, sectionId } = req.body;
-        // console.log(courseId, sectionId);
 
         //Validate data
         if (!courseId || !sectionId) {
@@ -149,11 +149,14 @@ exports.deleteSection = async (req, res) => {
             },
             { new: true }
         ).populate({
-            path:"courseContent",
-            populate:{
-                path:"subSections"
-            }
-        })
+            path: "courseContent",
+            populate: {
+                path: "subSections",
+            },
+        });
+
+        //Deleting subSection with in that section
+        await SubSection.deleteMany({ _id: { $in: Section.SubSection } });
 
         //Deleting the Section
         await Section.findByIdAndDelete(sectionId);

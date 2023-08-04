@@ -50,7 +50,7 @@ exports.createSubSection = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Sub-section updated successfully",
-            updatedSection,
+            data: updatedSection,
         });
     } catch (err) {
         console.log("Problem in creating SubSection: ", err);
@@ -146,7 +146,7 @@ exports.deleteSubSection = async (req, res) => {
             sectionId,
             { $pull: { subSections: subSectionId } },
             { new: true }
-        );
+        ).populate("subSections");
         if (!updatedSectionDetails) {
             return res.status(404).json({
                 success: false,
@@ -161,7 +161,7 @@ exports.deleteSubSection = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "SubSection deleted successfully",
-            updatedSectionDetails,
+            data: updatedSectionDetails,
         });
     } catch (err) {
         console.log("Error in deleting Sub Section: ", err);

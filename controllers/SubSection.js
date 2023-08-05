@@ -106,7 +106,7 @@ exports.updateSubSection = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "Sub-section updated successfully",
-            updatedSubSection,
+            data: updatedSubSection,
         });
     } catch (err) {
         return res.status(500).json({

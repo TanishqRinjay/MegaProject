@@ -66,19 +66,18 @@ exports.createSubSection = async (req, res) => {
 exports.updateSubSection = async (req, res) => {
     try {
         //Fetch data
-        const { title, description, timeDuration, subSectionId } = req.body;
+        const { title, description, timeDuration, subSectionId, videoUrl } =
+            req.body;
 
         //Extract video
-        const video = req.files.videoFile;
+        let video = false;
+        if (req.files && req.files.videoFile) {
+            video = req.files.videoFile;
+            // Process the video file here
+          }
 
         //Validation
-        if (
-            !title ||
-            !description ||
-            !timeDuration ||
-            !subSectionId ||
-            !video
-        ) {
+        if (!title || !description || !timeDuration || !subSectionId) {
             return res.status(400).json({
                 success: false,
                 message: "Please fill all the fields",
@@ -86,10 +85,13 @@ exports.updateSubSection = async (req, res) => {
         }
 
         //Upload video to Cloudinary
-        const uploadDetails = await uploadFileToCloudinary(
-            video,
-            process.env.FOLDER_NAME
-        );
+        let uploadDetails;
+        if (video) {
+            uploadDetails = await uploadFileToCloudinary(
+                video,
+                process.env.FOLDER_NAME
+            );
+        }
 
         //Update Sub Section
         const updatedSubSection = await SubSection.findByIdAndUpdate(
@@ -98,7 +100,7 @@ exports.updateSubSection = async (req, res) => {
                 title: title,
                 timeDuration: timeDuration,
                 description: description,
-                videoUrl: uploadDetails.secure_url,
+                videoUrl: video? uploadDetails.secure_url : videoUrl,
             },
             { new: true }
         );

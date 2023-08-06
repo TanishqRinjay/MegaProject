@@ -22,6 +22,9 @@ exports.createCourse = async (req, res) => {
         } = req.body;
         const thumbnail = req.files.thumbnailImage;
 
+        const parsedTag = JSON.parse(tag)
+        const parsedInstructions = JSON.parse(instructions)
+
         //Validating data
         if (
             !courseName ||
@@ -82,12 +85,12 @@ exports.createCourse = async (req, res) => {
             courseName,
             courseDescription,
             price,
-            tag,
+            tag : parsedTag,
             whatYouWillLearn: whatYouWillLearn,
             status,
             category: categoryDetails._id,
             instructor: instructorDetails._id,
-            instructions,
+            instructions: parsedInstructions,
             thumbnail: thumbnailImage.secure_url,
         });
 

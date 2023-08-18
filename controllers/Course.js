@@ -3,6 +3,7 @@ const Section = require("../models/Section");
 const SubSection = require("../models/SubSection");
 const Category = require("../models/Categories");
 const User = require("../models/User");
+const CourseProgress = require("../models/CourseProgress");
 const { uploadFileToCloudinary } = require("../utils/fileUploader");
 require("dotenv").config();
 
@@ -345,13 +346,13 @@ exports.getFullCourseDetails = async (req, res) => {
         })
       })
   
-      const totalDuration = convertSecondsToDuration(totalDurationInSeconds)
+      // const totalDuration = convertSecondsToDuration(totalDurationInSeconds)
   
       return res.status(200).json({
         success: true,
         data: {
           courseDetails,
-          totalDuration,
+          totalDurationInSeconds,
           completedVideos: courseProgressCount?.completedVideos
             ? courseProgressCount?.completedVideos
             : [],

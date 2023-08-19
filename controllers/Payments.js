@@ -5,6 +5,8 @@ const mailSender = require("../utils/mailSender");
 const {
     courseEnrollmentEmail,
 } = require("../mail/templates/courseEnrollmentEmail");
+import { response } from "express";
+import { paymentSuccessEmail } from "../mail/templates/paymentSuccessEmail";
 const mongoose = require("mongoose");
 
 require("dotenv").config();
@@ -152,6 +154,28 @@ const enrollStudent = async (courses, userId, res) => {
         })
     }
 };
+
+exports.sendPaymentSuccessEmail = async(req, res)=>{
+    const {orderId, paymentId, amount} = req.body
+    const userId = req.user.id
+
+    if(!userId || !paymentId || !amount || !userId){
+        return res.status(400).json({
+            success: false,
+            message: "Please fill all the fields"
+        })
+    }
+    try{
+        const enrolledStudent = await User.findById(userId)
+        await mailSender(enrolledStudent.email, "Successful Payment", paymentSuccessEmail(`${enrolledStudent.firstName} ${enrolledStudent.lastName}`, amount/100, orderId, paymentId))
+    }catch(err){
+        console.log("Error in sending mail: ", err);
+        return response.status(500).json({
+            success: false,
+            message: "could not send mail",
+        })
+    }
+}
 
 // <-----------------------------OLD CODE-------------------------------->
 

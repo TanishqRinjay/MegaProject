@@ -5,8 +5,8 @@ const mailSender = require("../utils/mailSender");
 const {
     courseEnrollmentEmail,
 } = require("../mail/templates/courseEnrollmentEmail");
-import { response } from "express";
-import { paymentSuccessEmail } from "../mail/templates/paymentSuccessEmail";
+const {paymentSuccessEmail} = require("../mail/templates/paymentSuccessEmail");
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 
 require("dotenv").config();
@@ -25,9 +25,9 @@ exports.capturePayment = async (req, res) => {
         for (const course_id of courses) {
             let course;
             try {
-                course = Course.findById(course_id);
+                course = await Course.findById(course_id);
                 if (!course) {
-                    return response.status(404).json({
+                    return res.status(404).json({
                         success: false,
                         message: "No course with this id is found",
                     });
@@ -103,9 +103,9 @@ exports.verifyPayment = async (req, res) => {
         //Enroll that student into those courses
         await enrollStudent(courses, userId, res);
 
-        return res.status(500).json({
+        return res.status(200).json({
             success: true,
-            message: "Payment veified",
+            message: "Payment verified",
         });
     }
 };
@@ -127,12 +127,12 @@ const enrollStudent = async (courses, userId, res) => {
             }
 
             //Find the student and add the course to their list of Enrolled Courses
-            const enrolledStudent = User.findByIdAndUpdate(
-                userId,
+            const enrolledStudent = await User.findOneAndUpdate(
+                {_id: userId},
                 { $push: { courses: courseId } },
                 { new: true }
             );
-
+                console.log("Enrolled student: ", enrolledStudent)
             //Send mail to student about enrollment
             const emailResponse = await mailSender(
                 enrolledStudent.email,
@@ -142,40 +142,48 @@ const enrollStudent = async (courses, userId, res) => {
                     `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
                 )
             );
-            console.log("Email sent successfully", emailResponse.response);
+            // console.log("Email sent successfully", emailResponse.response);
         }
         // const enrolledStudent = await User.findByIdAndUpdate(userId, {$push: {courses: {$each: courses}}}, {new: true})
-
-
     } catch (err) {
         return res.status(500).json({
             success: false,
-            meassage: err.message
-        })
+            meassage: err.message,
+        });
     }
 };
 
-exports.sendPaymentSuccessEmail = async(req, res)=>{
-    const {orderId, paymentId, amount} = req.body
-    const userId = req.user.id
+exports.sendPaymentSuccessEmail = async (req, res) => {
+    const { orderId, paymentId, amount } = req.body;
+    const userId = req.user.id;
 
-    if(!userId || !paymentId || !amount || !userId){
+    if (!userId || !paymentId || !amount || !userId) {
         return res.status(400).json({
             success: false,
-            message: "Please fill all the fields"
-        })
+            message: "Please fill all the fields",
+        });
     }
-    try{
-        const enrolledStudent = await User.findById(userId)
-        await mailSender(enrolledStudent.email, "Successful Payment", paymentSuccessEmail(`${enrolledStudent.firstName} ${enrolledStudent.lastName}`, amount/100, orderId, paymentId))
-    }catch(err){
-        console.log("Error in sending mail: ", err);
-        return response.status(500).json({
+    try {
+        const enrolledStudent = await User.findById(userId);
+        console.log("enrolled Student: ",enrolledStudent.email)
+        await mailSender(
+            enrolledStudent.email,
+            "Successful Payment",
+            paymentSuccessEmail(
+                `${enrolledStudent.firstName} ${enrolledStudent.lastName}`,
+                amount / 100,
+                orderId,
+                paymentId
+            )
+        );
+    } catch (err) {
+        console.log("Error in sending email: ", err);
+        return res.status(500).json({
             success: false,
             message: "could not send mail",
-        })
+        });
     }
-}
+};
 
 // <-----------------------------OLD CODE-------------------------------->
 

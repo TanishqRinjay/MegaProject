@@ -268,7 +268,7 @@ exports.getCourseDetails = async (req, res) => {
                 path: "courseContent",
                 populate: {
                     path: "subSections",
-                    select: "title"
+                    select: "-videoUrl"
                 },
             })
             .exec();
@@ -279,15 +279,23 @@ exports.getCourseDetails = async (req, res) => {
                 message: `Could not find course with course ID ${courseId}`,
             });
         }
+        
+        let totalDurationInSeconds = 0;
+        courseDetails.courseContent.forEach((content) => {
+            content.subSections.forEach((subSection) => {
+                const timeDurationInSeconds = parseInt(subSection.timeDuration)||0;
+                totalDurationInSeconds += timeDurationInSeconds;
+            });
+        });
         return res.status(200).json({
             success: true,
             message: "Course fetched successfully",
-            data: courseDetails,
+            data: {courseDetails, totalDurationInSeconds: totalDurationInSeconds}
         });
     } catch (err) {
         console.log("Error in fetching course details: ", err);
         return res.status(500).json({
-            success: true,
+            success: false,
             message: err.message,
         });
     }

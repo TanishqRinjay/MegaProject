@@ -6,13 +6,13 @@ const { uploadFileToCloudinary } = require("../utils/fileUploader");
 exports.createSubSection = async (req, res) => {
     try {
         //Data fetch
-        const { title, description, timeDuration, sectionId } = req.body;
+        const { title, description,  sectionId } = req.body;
 
         //Extract video
         const video = req.files.videoFile;
 
         //Validation
-        if (!title || !description || !timeDuration || !sectionId || !video) {
+        if (!title || !description || !sectionId || !video) {
             return res.status(400).json({
                 success: false,
                 message: "Please fill all the fields",
@@ -28,7 +28,7 @@ exports.createSubSection = async (req, res) => {
         // Create Sub Section
         const subSectionDetails = await SubSection.create({
             title: title,
-            timeDuration: timeDuration,
+            timeDuration: `${uploadDetails.duration}`,
             description: description,
             videoUrl: uploadDetails.secure_url,
         });

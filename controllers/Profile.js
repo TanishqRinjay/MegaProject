@@ -201,7 +201,6 @@ exports.getEnrolledCourses = async (req, res) => {
                 userDetails.courses[i].totalDuration = convertSecondsToDuration(
                     totalDurationInSeconds
                 );
-                console.log("Check 2");
                 SubsectionLength +=
                     userDetails.courses[i].courseContent[j].subSections.length;
             }

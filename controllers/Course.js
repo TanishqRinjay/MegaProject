@@ -263,7 +263,7 @@ exports.getCourseDetails = async (req, res) => {
                 },
             })
             .populate("category")
-            // .populate("ratingAndReviews")
+            .populate("ratingAndReviews")
             .populate({
                 path: "courseContent",
                 populate: {
@@ -326,7 +326,7 @@ exports.getFullCourseDetails = async (req, res) => {
             .exec();
 
         let courseProgressCount = await CourseProgress.findOne({
-            courseID: courseId,
+            courseId: courseId,
             userId: userId,
         });
 

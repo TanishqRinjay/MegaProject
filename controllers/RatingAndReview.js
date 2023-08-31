@@ -14,7 +14,7 @@ exports.createRating = async (req, res) => {
         //check if user is enrolled or not
         const courseDetails = await Course.findOne({
             _id: courseId,
-            studentsEnrolled: { $eleMatch: { $eq: userId } },
+            studentsEnrolled: { $elemMatch: { $eq: userId } },
         });
         if (!courseDetails) {
             return res.status(404).json({
@@ -24,7 +24,7 @@ exports.createRating = async (req, res) => {
         }
 
         //Check if user already created review
-        const alreadyReviewed = RatingAndReview.findOne({
+        const alreadyReviewed = await RatingAndReview.findOne({
             user: userId,
             course: courseId,
         });

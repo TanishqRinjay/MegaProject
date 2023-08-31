@@ -1,7 +1,9 @@
 const Profile = require("../models/Profile");
 const User = require("../models/User");
 const Course = require("../models/Course");
+const CourseProgress = require("../models/CourseProgress");
 const { uploadFileToCloudinary } = require("../utils/fileUploader");
+const { convertSecondsToDuration } = require("../utils/secToDuration");
 
 //Updating Profile info
 exports.updateProfile = async (req, res) => {
@@ -50,7 +52,9 @@ exports.updateProfile = async (req, res) => {
         profileDetails.contactNumber = contactNumber;
         profileDetails.gender = gender;
         await profileDetails.save();
-        const updatedUserDetails = await User.findById(id).populate("additionalDetails").exec()
+        const updatedUserDetails = await User.findById(id)
+            .populate("additionalDetails")
+            .exec();
         updatedUserDetails.password = null;
 
         //Success response
@@ -73,7 +77,6 @@ exports.deleteProfile = async (req, res) => {
     try {
         //Fetch data
         const id = req.user.id;
-        console.log(id)
         //Validate Id
         const userDetails = await User.findById(id);
         if (!userDetails) {
@@ -118,7 +121,7 @@ exports.getAllUserDetails = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "User details fetched successfully",
-            userDetails
+            userDetails,
         });
     } catch (err) {
         return res.status(500).json({
@@ -140,12 +143,13 @@ exports.updateDisplayPicture = async (req, res) => {
             1000,
             1000
         );
-        console.log(image);
         const updatedProfile = await User.findByIdAndUpdate(
             { _id: userId },
             { image: image.secure_url },
             { new: true }
-        ).populate("additionalDetails").exec();
+        )
+            .populate("additionalDetails")
+            .exec();
         res.send({
             success: true,
             message: `Image Updated successfully`,
@@ -155,7 +159,7 @@ exports.updateDisplayPicture = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: "Error in image upload",
-            error: error.message
+            error: error.message,
         });
     }
 };
@@ -164,19 +168,62 @@ exports.updateDisplayPicture = async (req, res) => {
 exports.getEnrolledCourses = async (req, res) => {
     try {
         const userId = req.user.id;
-        const userDetails = await User.findOne({
+        let userDetails = await User.findOne({
             _id: userId,
         })
             .populate({
                 path: "courses",
                 populate: {
                     path: "courseContent",
-                    populate:{
-                        path: "subSections"
-                    }
-                }
+                    populate: {
+                        path: "subSections",
+                    },
+                },
             })
             .exec();
+
+        userDetails = userDetails.toObject();
+        var SubsectionLength = 0;
+        for (var i = 0; i < userDetails.courses.length; i++) {
+            let totalDurationInSeconds = 0;
+            SubsectionLength = 0;
+            for (
+                var j = 0;
+                j < userDetails.courses[i].courseContent.length;
+                j++
+            ) {
+                totalDurationInSeconds += userDetails.courses[i].courseContent[
+                    j
+                ].subSections.reduce(
+                    (acc, curr) => acc + parseInt(curr.timeDuration),
+                    0
+                );
+                userDetails.courses[i].totalDuration = convertSecondsToDuration(
+                    totalDurationInSeconds
+                );
+                console.log("Check 2");
+                SubsectionLength +=
+                    userDetails.courses[i].courseContent[j].subSections.length;
+            }
+            let courseProgressCount = await CourseProgress.findOne({
+                courseId: userDetails.courses[i]._id,
+                userId: userId,
+            });
+            courseProgressCount = courseProgressCount?.completedVideos.length;
+            if (SubsectionLength === 0) {
+                userDetails.courses[i].progressPercentage = 100;
+            } else {
+                // To make it up to 2 decimal point
+                const multiplier = Math.pow(10, 2);
+                userDetails.courses[i].progressPercentage =
+                    Math.round(
+                        (courseProgressCount / SubsectionLength) *
+                            100 *
+                            multiplier
+                    ) / multiplier;
+            }
+        }
+
         if (!userDetails) {
             return res.status(400).json({
                 success: false,

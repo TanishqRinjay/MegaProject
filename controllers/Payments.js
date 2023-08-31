@@ -8,6 +8,7 @@ const {
 const {paymentSuccessEmail} = require("../mail/templates/paymentSuccessEmail");
 const crypto = require("crypto");
 const mongoose = require("mongoose");
+const CourseProgress = require("../models/CourseProgress");
 
 require("dotenv").config();
 
@@ -126,10 +127,18 @@ const enrollStudent = async (courses, userId, res) => {
                 });
             }
 
+            const courseProgress = await CourseProgress.create({
+                courseId: courseId,
+                userId: userId,
+                completedVideos: [],
+            })
+
             //Find the student and add the course to their list of Enrolled Courses
             const enrolledStudent = await User.findOneAndUpdate(
                 {_id: userId},
-                { $push: { courses: courseId } },
+                { $push: { courses: courseId,
+                    courseProgress: courseProgress._id
+                } },
                 { new: true }
             );
                 console.log("Enrolled student: ", enrolledStudent)

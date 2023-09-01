@@ -261,7 +261,7 @@ exports.instructorDashboard = async(req, res)=>{
         })
         return res.status(200).json({
             message: "Instructor stats fetched successfully",
-            courseData
+            courses: courseData
         })
 
     }catch(err){

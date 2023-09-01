@@ -241,7 +241,7 @@ exports.getEnrolledCourses = async (req, res) => {
     }
 };
 
-exports.instructorDetails = async(req, res)=>{
+exports.instructorDashboard = async(req, res)=>{
     try{
 
         const courseDetails = await Course.find({instructor: req.user.id})

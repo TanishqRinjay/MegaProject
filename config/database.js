@@ -12,7 +12,7 @@ exports.connect = () => {
             console.log("Connected to MongoDB");
         })
         .catch((err) => {
-            console.log("Can't connect to MongoDB");
+            console.log("Can't connect to MongoDB", process.env.MONGO_URL);
             console.log(err);
             process.exit(1);
         });

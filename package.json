@@ -1,14 +1,14 @@
 {
-  "name": "megaproject",
+  "name": "study-notion-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "study-notion-backend",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Tanishq Rinjay",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",

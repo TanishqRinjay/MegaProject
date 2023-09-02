@@ -47,7 +47,6 @@ exports.sendOTP = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "OTP sent successfully",
-            otp,
         });
         //last
         //last
@@ -154,7 +153,6 @@ exports.signUp = async (req, res) => {
         return res.status(200).json({
             success: true,
             message: "User created successfully",
-            user,
         });
     } catch (err) {
         console.log("Error in signing up: ", err);

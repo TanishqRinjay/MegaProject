@@ -10,6 +10,8 @@ exports.updateProfile = async (req, res) => {
     try {
         //Fetch data
         const {
+            firstName,
+            lastName,
             gender,
             dateOfBirth = "",
             about = "",
@@ -20,7 +22,7 @@ exports.updateProfile = async (req, res) => {
         const id = req.user.id;
 
         //Validate data
-        if (!gender || !contactNumber || !id) {
+        if (!gender || !contactNumber || !id || !firstName || !lastName) {
             return res.status(400).json({
                 success: false,
                 message: "Please fill necessary fields",
@@ -29,6 +31,8 @@ exports.updateProfile = async (req, res) => {
 
         //Retrieving Profile details by retrieving User details first
         const userDetails = await User.findById(id);
+        userDetails.firstName = firstName
+        userDetails.lastName = lastName
         const profileId = userDetails.additionalDetails;
         const profileDetails = await Profile.findById(profileId);
 
@@ -51,6 +55,7 @@ exports.updateProfile = async (req, res) => {
         profileDetails.about = about;
         profileDetails.contactNumber = contactNumber;
         profileDetails.gender = gender;
+        await userDetails.save();
         await profileDetails.save();
         const updatedUserDetails = await User.findById(id)
             .populate("additionalDetails")

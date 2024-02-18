@@ -3,14 +3,27 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
-const fs = require("fs-extra");
+const fs = require("fs");
+const pdf = require("pdf-parse");
 const { spawn } = require("child_process");
+const { chatGPT } = require("./ChatGPT");
+const path = require("path");
+const { chatGPTSummarizer } = require("./ChatGPT");
 
 exports.videoToAudioTranscribe = async (req, res) => {
-    const { videoUrl } = req.body;
+    const videoUrl = req.body.videoUrl;
 
     try {
         // Download the video file
+
+        fs.unlink("output.pdf", (err) => {
+            if (err) {
+                console.error("Error deleting PDF file:", err);
+            } else {
+                console.log("PDF file deleted successfully.");
+            }
+        });
+
         const videoFileName = "input.mp4"; // Set a temporary file name
         const videoFilePath = `${__dirname}/${videoFileName}`;
         const writer = fs.createWriteStream(videoFilePath);
@@ -69,7 +82,7 @@ exports.videoToAudioTranscribe = async (req, res) => {
                 });
                 const transcriptId = response.data.id;
                 const pollingEndpoint = `${baseUrl}/transcript/${transcriptId}`;
-
+                let transcribedText = "";
                 while (true) {
                     const pollingResponse = await axios.get(pollingEndpoint, {
                         headers: headers,
@@ -77,25 +90,25 @@ exports.videoToAudioTranscribe = async (req, res) => {
                     const transcriptionResult = pollingResponse.data;
 
                     if (transcriptionResult.status === "completed") {
-                        const transcribedText = transcriptionResult.text;
-                        const PDFDocument = require("pdfkit");
+                        transcribedText = transcriptionResult.text;
 
-                        // Create a new PDF document
-                        const doc = new PDFDocument();
+                        console.log("Transcribed Text: ", transcribedText);
 
-                        // Pipe the PDF output to a file
-                        const outputStream = fs.createWriteStream("output.pdf");
-                        doc.pipe(outputStream);
-
-                        // Add text to the PDF document
-                        doc.fontSize(12).text(
-                            transcribedText
-                        );
-
-                        // Finalize the PDF document
-                        doc.end();
-
-                        console.log("PDF generated successfully.");
+                        // TO UNCOMMENT
+                        // outputStream.on("finish", () => {
+                        //     fs.unlink("output.pdf", (err) => {
+                        //         if (err) {
+                        //             console.error(
+                        //                 "Error deleting PDF file:",
+                        //                 err
+                        //             );
+                        //         } else {
+                        //             console.log(
+                        //                 "PDF file deleted successfully."
+                        //             );
+                        //         }
+                        //     });
+                        // });
                         break;
                     } else if (transcriptionResult.status === "error") {
                         throw new Error(
@@ -117,8 +130,35 @@ exports.videoToAudioTranscribe = async (req, res) => {
                 // Delete the temporary video and audio files
                 fs.unlinkSync(videoFilePath);
                 fs.unlinkSync(audioFilePath);
+                transcribedText = `You are document assistant and your name is 'EduNxt Helper' and you have data named lecture which is in text containing ${transcribedText} and answer for any query asked which is not in context to this lecture/data will be 'This question was not in lecture', correct spellings then answer`;
+                const summaryResponse = await chatGPTSummarizer(
+                    transcribedText,
+                    [
+                        {
+                            role: "user",
+                            content: "Summarize this lecture in keypoints",
+                        },
+                    ]
+                );
+                console.log("Summary Response: ", summaryResponse);
+                const PDFDocument = require("pdfkit");
+                // Create a new PDF document
+                const doc = new PDFDocument();
 
-                res.json({ success: true });
+                // Pipe the PDF output to a file
+                const outputStream = fs.createWriteStream("output.pdf");
+                doc.pipe(outputStream);
+
+                // Add text to the PDF document
+                doc.fontSize(12).text(summaryResponse);
+
+                // Finalize the PDF document
+                doc.end();
+
+                console.log("PDF generated successfully.");
+                return res
+                    .status(200)
+                    .json({ success: true, data: transcribedText });
             });
 
             ffmpegProcess.on("error", (err) => {
@@ -135,4 +175,27 @@ exports.videoToAudioTranscribe = async (req, res) => {
         console.error("Error:", error);
         res.status(500).json({ success: false, error: error.message });
     }
+};
+
+exports.downloadPDFNotes = async (req, res) => {
+    const pdfReader = async (filePath) => {
+        try {
+            const dataBuffer = fs.readFileSync(filePath);
+            console.log(dataBuffer);
+            const pdfdata = await pdf(dataBuffer);
+            const text = pdfdata.text;
+            console.log(text);
+        } catch (err) {
+            console.log(err);
+        }
+    };
+    const filePath = path.join(__dirname, "..", "output.pdf");
+    pdfReader(filePath);
+    res.download(filePath, "output.pdf", (err) => {
+        if (err) {
+            // Handle error, but don't expose to the client
+            console.error(err);
+            res.status(500).send("Couldn't download the file.");
+        }
+    });
 };

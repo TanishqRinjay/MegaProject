@@ -14,8 +14,6 @@ const {
     resetPassword,
 } = require("../controllers/ResetPassword");
 
-const {videoToAudioTranscribe} = require("../controllers/Transcribe");
-
 const { auth, isStudent } = require("../middlewares/auth");
 
 // Routes for Login, Signup, and Authentication
@@ -46,11 +44,6 @@ router.post("/reset-password-token", resetPasswordToken);
 // Route for resetting user's password after verification
 router.post("/reset-password", resetPassword);
 
-// ********************************************************************************************************
-//                                      Video To PDF
-// ********************************************************************************************************
-
-router.post("/transcribe",videoToAudioTranscribe);
 
 // Export the router for use in the main application
 module.exports = router;

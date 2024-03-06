@@ -16,13 +16,13 @@ exports.videoToAudioTranscribe = async (req, res) => {
     try {
         // Download the video file
 
-        fs.unlink("output.pdf", (err) => {
-            if (err) {
-                console.error("Error deleting PDF file:", err);
-            } else {
-                console.log("PDF file deleted successfully.");
-            }
-        });
+        // fs.unlink("output.pdf", (err) => {
+        //     if (err) {
+        //         console.error("Error deleting PDF file:", err);
+        //     } else {
+        //         console.log("PDF file deleted successfully.");
+        //     }
+        // });
 
         const videoFileName = "input.mp4"; // Set a temporary file name
         const videoFilePath = `${__dirname}/${videoFileName}`;

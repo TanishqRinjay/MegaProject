@@ -4,7 +4,7 @@ require("dotenv").config();
 exports.connect = () => {
     mongoose
         .connect(process.env.MONGO_URL, {
-            dbName: 'StudyNotion',
+            dbName: "EduNxt",
             useNewUrlParser: true,
             useUnifiedTopology: true,
         })

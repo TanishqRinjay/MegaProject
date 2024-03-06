@@ -69,7 +69,7 @@ exports.capturePayment = async (req, res) => {
         // Initiate the payment using Razorpay
         const paymentResponse = await instance.orders.create(options);
         console.log(paymentResponse);
-        res.json({
+        return res.status(200).json({
             success: true,
             data: paymentResponse,
         });
@@ -135,7 +135,6 @@ exports.sendPaymentSuccessEmail = async (req, res) => {
 
     try {
         const enrolledStudent = await User.findById(userId);
-
         await mailSender(
             enrolledStudent.email,
             `Payment Received`,
@@ -155,7 +154,9 @@ exports.sendPaymentSuccessEmail = async (req, res) => {
 };
 
 // enroll the student in the courses
-const enrollStudents = async (courses, userId, res) => {
+exports.enrollStudents = async (req, res) => {
+    const { courses } = req.body;
+    const userId = req.user.id;
     if (!courses || !userId) {
         return res.status(400).json({
             success: false,
@@ -168,7 +169,7 @@ const enrollStudents = async (courses, userId, res) => {
             // Find the course and enroll the student in it
             const enrolledCourse = await Course.findOneAndUpdate(
                 { _id: courseId },
-                { $push: { studentsEnroled: userId } },
+                { $push: { studentsEnrolled: userId } },
                 { new: true }
             );
 
@@ -198,16 +199,21 @@ const enrollStudents = async (courses, userId, res) => {
 
             console.log("Enrolled student: ", enrolledStudent);
             // Send an email notification to the enrolled student
-            const emailResponse = await mailSender(
-                enrolledStudent.email,
-                `Successfully Enrolled into ${enrolledCourse.courseName}`,
-                courseEnrollmentEmail(
-                    enrolledCourse.courseName,
-                    `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
-                )
-            );
+            // const emailResponse = await mailSender(
+            //     enrolledStudent.email,
+            //     `Successfully Enrolled into ${enrolledCourse.courseName}`,
+            //     courseEnrollmentEmail(
+            //         enrolledCourse.courseName,
+            //         `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
+            //     )
+            // );
 
-            console.log("Email sent successfully: ", emailResponse.response);
+            // console.log("Email sent successfully: ", emailResponse.response);
+
+            return res.status(200).json({
+                success: true,
+                message: "Student Enrolled Successfully",
+            });
         } catch (error) {
             console.log(error);
             return res
@@ -531,7 +537,7 @@ const enrollStudents = async (courses, userId, res) => {
 //             //Send mail to student
 //             const emailResponse = await mailSender(
 //                 enrolledStudent.email,
-//                 "Congratulations from Studynotion",
+//                 "Congratulations from EduNxt",
 //                 "Congratulations for onboarding onto new course"
 //             );
 //             console.log(emailResponse);

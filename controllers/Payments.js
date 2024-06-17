@@ -15,6 +15,7 @@ const CourseProgress = require("../models/CourseProgress");
 require("dotenv").config();
 
 exports.capturePayment = async (req, res) => {
+    console.log("hello anubhav");
     const { courses } = req.body;
     const userId = req.user.id;
     if (courses.length === 0) {
@@ -68,7 +69,7 @@ exports.capturePayment = async (req, res) => {
     try {
         // Initiate the payment using Razorpay
         const paymentResponse = await instance.orders.create(options);
-        console.log(paymentResponse);
+        console.log("payment response", paymentResponse);
         return res.status(200).json({
             success: true,
             data: paymentResponse,
@@ -118,6 +119,60 @@ exports.verifyPayment = async (req, res) => {
     }
 
     return res.status(200).json({ success: false, message: "Payment Failed" });
+};
+
+const enrollStudents = async (courses, userId, res) => {
+    try {
+        // if(!courses|| !userId)
+        for (const courseId of courses) {
+            const enrolledCourse = await Course.findOneAndUpdate(
+                { _id: courseId },
+                { $push: { studentsEnrolled: userId } },
+                { new: true }
+            );
+            if (!enrolledCourse) {
+                return res.status(500).json({
+                    success: false,
+                    message: "Failed to enroll student as course isn't found",
+                });
+            }
+
+            const courseProgress = await CourseProgress.create({
+                courseId: courseId,
+                userId: userId,
+                completedVideos: [],
+            });
+
+            //Find the student and add the course to their list of Enrolled Courses
+            const enrolledStudent = await User.findOneAndUpdate(
+                { _id: userId },
+                {
+                    $push: {
+                        courses: courseId,
+                        courseProgress: courseProgress._id,
+                    },
+                },
+                { new: true }
+            );
+            console.log("Enrolled student: ", enrolledStudent);
+            //Send mail to student about enrollment
+            const emailResponse = await mailSender(
+                enrolledStudent.email,
+                `Successfully enrolled into ${enrolledCourse.courseName}`,
+                courseEnrollmentEmail(
+                    enrolledCourse.courseName,
+                    `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
+                )
+            );
+            console.log("Email sent successfully", emailResponse.response);
+        }
+        // const enrolledStudent = await User.findByIdAndUpdate(userId, {$push: {courses: {$each: courses}}}, {new: true})
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            meassage: err.message,
+        });
+    }
 };
 
 // Send Payment Success Email
@@ -199,16 +254,16 @@ exports.enrollStudents = async (req, res) => {
 
             console.log("Enrolled student: ", enrolledStudent);
             // Send an email notification to the enrolled student
-            // const emailResponse = await mailSender(
-            //     enrolledStudent.email,
-            //     `Successfully Enrolled into ${enrolledCourse.courseName}`,
-            //     courseEnrollmentEmail(
-            //         enrolledCourse.courseName,
-            //         `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
-            //     )
-            // );
+            const emailResponse = await mailSender(
+                enrolledStudent.email,
+                `Successfully Enrolled into ${enrolledCourse.courseName}`,
+                courseEnrollmentEmail(
+                    enrolledCourse.courseName,
+                    `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
+                )
+            );
 
-            // console.log("Email sent successfully: ", emailResponse.response);
+            console.log("Email sent successfully: ", emailResponse.response);
 
             return res.status(200).json({
                 success: true,

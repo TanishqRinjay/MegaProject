@@ -12,7 +12,7 @@ const mailSender = async (email, title, body) => {
         });
 
         let info = await transporter.sendMail({
-            from: "EduNxt || RNS",
+            from: "EduNxt || Tanishq",
             to: `${email}`,
             subject: `${title}`,
             html: `${body}`,

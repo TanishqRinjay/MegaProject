@@ -15,7 +15,6 @@ const CourseProgress = require("../models/CourseProgress");
 require("dotenv").config();
 
 exports.capturePayment = async (req, res) => {
-    console.log("hello anubhav");
     const { courses } = req.body;
     const userId = req.user.id;
     if (courses.length === 0) {

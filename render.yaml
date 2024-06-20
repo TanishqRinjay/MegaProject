@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: my-web-service
+    env: node
+    plan: free
+    buildCommand: yarn install # or npm install
+    startCommand: yarn start # or npm start
+    region: oregon
+    setupCommands:
+      - apt-get update && apt-get install -y ffmpeg

@@ -1,10 +1,10 @@
 services:
   - type: web
-    name: my-web-service
+    name: eduNxt-backend-service
     env: node
     plan: free
-    buildCommand: yarn install # or npm install
-    startCommand: yarn start # or npm start
-    region: oregon
+    buildCommand: npm install # or npm install
+    startCommand: nodemon app.js # or npm start
+    region: ap-1
     setupCommands:
       - apt-get update && apt-get install -y ffmpeg

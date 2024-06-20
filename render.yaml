@@ -1,10 +1,10 @@
 services:
-  - type: web
-    name: eduNxt-backend-service
-    env: node
-    plan: free
-    buildCommand: npm install # or npm install
-    startCommand: nodemon app.js # or npm start
-    region: ap-1
-    setupCommands:
-      - apt-get update && apt-get install -y ffmpeg
+    - type: web
+      name: eduNxt-backend-service
+      env: node
+      plan: free
+      buildCommand: npm install # or npm install
+      startCommand: node app.js # or npm start
+      region: ap-1
+      setupCommands:
+          - apt-get update && apt-get install -y ffmpeg

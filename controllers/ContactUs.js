@@ -1,4 +1,3 @@
-const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
 
 //TODO: Send mail to User
@@ -14,7 +13,7 @@ exports.contactUsMail = async (req, res) => {
         //     "additionalDetails"
         // );
         //Creating data to send to Student/Instructor
-        companyName = "EduNxt";
+        const companyName = "EduNxt";
         const userMailData = `Hi ${firstName} ${lastName}, 
         Thanks for contacting ${companyName}! This automatic reply is just to let you know that we received your message and we'll get back to you with a response as quickly as possible.`;
         const userMailTitle = "EduNxt - Contact Forum";
@@ -26,7 +25,7 @@ exports.contactUsMail = async (req, res) => {
         Email: (${email}) <br>
         Phone No. : ${phoneNumber} <br>
         message: ${message}`;
-        const managerMailId = "tanishqbaranwal@gmail.com";
+        const managerMailId = "edunxtedtech@gmail.com";
 
         //Sending mail to EduNxt manager
         await mailSender(managerMailId, managerMailTitle, managerMailData);

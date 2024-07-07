@@ -23,7 +23,7 @@ async function sendVerificationEmail(email, otp) {
     try {
         const mailResponse = await mailSender(
             email,
-            "Verification email from StudyNotion",
+            "Verification email from EduNxt",
             emailTemplate(otp)
         );
 

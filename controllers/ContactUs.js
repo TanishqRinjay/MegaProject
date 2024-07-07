@@ -1,4 +1,3 @@
-const User = require("../models/User");
 const mailSender = require("../utils/mailSender");
 
 //TODO: Send mail to User
@@ -14,21 +13,21 @@ exports.contactUsMail = async (req, res) => {
         //     "additionalDetails"
         // );
         //Creating data to send to Student/Instructor
-        companyName = "StudyNotion";
+        const companyName = "EduNxt";
         const userMailData = `Hi ${firstName} ${lastName}, 
         Thanks for contacting ${companyName}! This automatic reply is just to let you know that we received your message and we'll get back to you with a response as quickly as possible.`;
-        const userMailTitle = "StudyNotion - Contact Forum";
+        const userMailTitle = "EduNxt - Contact Forum";
         await mailSender(email, userMailTitle, userMailData);
 
-        //Creating data to send to StudyNotion Manager, yaani ki main
-        const managerMailTitle = "StudyNotion - Contact Us Forum recieved";
+        //Creating data to send to EduNxt Manager, yaani ki main
+        const managerMailTitle = "EduNxt - Contact Us Forum recieved";
         const managerMailData = `From: ${firstName} ${lastName} <br>
         Email: (${email}) <br>
         Phone No. : ${phoneNumber} <br>
         message: ${message}`;
-        const managerMailId = "tanishqbaranwal@gmail.com";
+        const managerMailId = "edunxtedtech@gmail.com";
 
-        //Sending mail to StudyNotion manager
+        //Sending mail to EduNxt manager
         await mailSender(managerMailId, managerMailTitle, managerMailData);
 
         //Success response

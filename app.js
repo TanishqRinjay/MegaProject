@@ -6,7 +6,8 @@ const profileRoutes = require("./routes/Profile");
 const paymentRoutes = require("./routes/Payments");
 const courseRoutes = require("./routes/Course");
 const commonRoutes = require("./routes/Common");
-
+const openaiRoutes = require("./routes/OpenAI");
+const bodyParser = require('body-parser');
 const database = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -22,6 +23,7 @@ database.connect();
 
 //middlewares
 
+app.use(bodyParser.json());
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -46,6 +48,7 @@ app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/course", courseRoutes);
 app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/reach", commonRoutes);
+app.use("/api/v1/openai", openaiRoutes);
 
 //def route
 app.get("/", (req, res) => {

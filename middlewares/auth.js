@@ -1,6 +1,8 @@
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const User = require("../models/User");
+const { asyncLocalStorage } = require("./asyncLocalStorage");
+const { log } = require("../utils/logger");
 
 //auth
 exports.auth = async (req, res, next) => {
@@ -12,6 +14,7 @@ exports.auth = async (req, res, next) => {
             req.header("Authorization")?.replace("Bearer ", "");
         //if token is missing
         if (!token) {
+            log("failed authentication (no token)", req.originalUrl);
             return res.status(401).json({
                 success: false,
                 message: "No token found",
@@ -20,10 +23,17 @@ exports.auth = async (req, res, next) => {
         //Token verification
         try {
             const decode = jwt.verify(token, process.env.JWT_SECRET);
-            console.log("Decode: ", decode);
             req.user = decode;
-            console.log(req.user.accountType);
+
+            // Update the AsyncLocalStorage store with the user ID
+            const store = asyncLocalStorage.getStore();
+            if (store) {
+                store.userId = req.user.id;
+            }
+            log(`authenticated user: ${decode.id}`, req.originalUrl);
+            // console.log(req.user.accountType);
         } catch (err) {
+            log("failed authentication (invalid token)", req.originalUrl);
             return res.status(401).json({
                 success: false,
                 message: "Invalid token",
@@ -31,10 +41,11 @@ exports.auth = async (req, res, next) => {
         }
         next();
     } catch (err) {
+        log(`authentication error: ${err.message}`, req.originalUrl);
         return res.status(401).json({
             success: false,
             message: "Something went wrong while validating token",
-            error: err.message
+            error: err.message,
         });
     }
 };
@@ -84,7 +95,7 @@ exports.isAdmin = async (req, res, next) => {
                 message: "This is a protected route for admin",
             });
         }
-        next()
+        next();
     } catch (err) {
         return res.status(400).json({
             success: false,

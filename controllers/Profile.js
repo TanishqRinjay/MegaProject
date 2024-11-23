@@ -4,6 +4,7 @@ const Course = require("../models/Course");
 const CourseProgress = require("../models/CourseProgress");
 const { uploadFileToCloudinary } = require("../utils/fileUploader");
 const { convertSecondsToDuration } = require("../utils/secToDuration");
+const { log } = require("../utils/logger");
 
 //Updating Profile info
 exports.updateProfile = async (req, res) => {
@@ -31,8 +32,8 @@ exports.updateProfile = async (req, res) => {
 
         //Retrieving Profile details by retrieving User details first
         const userDetails = await User.findById(id);
-        userDetails.firstName = firstName
-        userDetails.lastName = lastName
+        userDetails.firstName = firstName;
+        userDetails.lastName = lastName;
         const profileId = userDetails.additionalDetails;
         const profileDetails = await Profile.findById(profileId);
 
@@ -140,6 +141,10 @@ exports.getAllUserDetails = async (req, res) => {
 //Update DP
 exports.updateDisplayPicture = async (req, res) => {
     try {
+        log(
+            "started updating display picture",
+            "/api/v1/profile/updateDisplayPicture"
+        );
         const displayPicture = req.files.displayPicture;
         const userId = req.user.id;
         const image = await uploadFileToCloudinary(
@@ -155,12 +160,20 @@ exports.updateDisplayPicture = async (req, res) => {
         )
             .populate("additionalDetails")
             .exec();
+        log(
+            "successfully updated display picture",
+            "/api/v1/profile/updateDisplayPicture"
+        );
         res.send({
             success: true,
             message: `Image Updated successfully`,
             data: updatedProfile,
         });
     } catch (error) {
+        log(
+            `failed to update display picture: ${error.message}`,
+            "/api/v1/profile/updateDisplayPicture"
+        );
         return res.status(500).json({
             success: false,
             message: "Error in image upload",
@@ -172,7 +185,12 @@ exports.updateDisplayPicture = async (req, res) => {
 // Get all enrolledd courses
 exports.getEnrolledCourses = async (req, res) => {
     try {
+        log(
+            "started fetching enrolled courses",
+            "/api/v1/profile/getEnrolledCourses"
+        );
         const userId = req.user.id;
+
         let userDetails = await User.findOne({
             _id: userId,
         })
@@ -229,16 +247,29 @@ exports.getEnrolledCourses = async (req, res) => {
         }
 
         if (!userDetails) {
+            log(
+                `failed to find user with id: ${userId}`,
+                "/api/v1/profile/getEnrolledCourses"
+            );
             return res.status(400).json({
                 success: false,
-                message: `Could not find user with id: ${userDetails}`,
+                message: `Could not find user with id: ${userId}`,
             });
         }
+
+        log(
+            "successfully fetched enrolled courses",
+            "/api/v1/profile/getEnrolledCourses"
+        );
         return res.status(200).json({
             success: true,
             data: userDetails.courses,
         });
     } catch (error) {
+        log(
+            `failed to fetch enrolled courses: ${error.message}`,
+            "/api/v1/profile/getEnrolledCourses"
+        );
         return res.status(500).json({
             success: false,
             message: error.message,
@@ -246,11 +277,11 @@ exports.getEnrolledCourses = async (req, res) => {
     }
 };
 
-exports.instructorDashboard = async(req, res)=>{
-    try{
 
-        const courseDetails = await Course.find({instructor: req.user.id})
-        const courseData = courseDetails.map((course)=>{
+exports.instructorDashboard = async (req, res) => {
+    try {
+        const courseDetails = await Course.find({ instructor: req.user.id });
+        const courseData = courseDetails.map((course) => {
             const totalStudentsEnrolled = course.studentsEnrolled.length;
             const totalAmountGenerated = totalStudentsEnrolled * course.price;
 
@@ -260,20 +291,19 @@ exports.instructorDashboard = async(req, res)=>{
                 courseName: course.courseName,
                 courseDescription: course.courseDescription,
                 totalStudentsEnrolled,
-                totalAmountGenerated
-            }
-            return courseDataWithStats
-        })
+                totalAmountGenerated,
+            };
+            return courseDataWithStats;
+        });
         return res.status(200).json({
             message: "Instructor stats fetched successfully",
-            courses: courseData
-        })
-
-    }catch(err){
+            courses: courseData,
+        });
+    } catch (err) {
         console.log(err);
         return res.status(500).json({
             message: "Internal Server Error",
-            error: err.message
-        })
+            error: err.message,
+        });
     }
-}
+};

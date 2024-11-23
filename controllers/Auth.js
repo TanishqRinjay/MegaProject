@@ -6,6 +6,7 @@ const bcrypt = require("bcrypt");
 const mailSender = require("../utils/mailSender");
 const { passwordUpdated } = require("../mail/templates/passwordUpdate");
 const jwt = require("jsonwebtoken");
+const { log } = require("../utils/logger");
 require("dotenv").config();
 
 //sendOTP
@@ -166,26 +167,39 @@ exports.signUp = async (req, res) => {
 //Login
 exports.login = async (req, res) => {
     try {
+        log("Login process started", "/api/v1/auth/login");
+
         const { email, password } = req.body;
-        //data fields validation
+
+        // Data fields validation
         if (!email || !password) {
+            log(
+                "Login failed: missing email or password",
+                "/api/v1/auth/login"
+            );
             return res.status(403).json({
                 success: false,
                 message: "Please fill all the fields",
             });
         }
-        //Check if user's email is registered
+
+        // Check if user's email is registered
         const user = await User.findOne({ email })
             .populate("additionalDetails")
             .exec();
+
         if (!user) {
+            log(
+                `Login failed: user not registered with email ${email}`,
+                "/api/v1/auth/login"
+            );
             return res.status(401).json({
                 success: false,
                 message: "User not registered, please Sign Up!",
             });
         }
 
-        //Comparing the passwords
+        // Comparing the passwords
         if (await bcrypt.compare(password, user.password)) {
             const payload = {
                 email: user.email,
@@ -195,14 +209,21 @@ exports.login = async (req, res) => {
             const token = jwt.sign(payload, process.env.JWT_SECRET, {
                 expiresIn: "30d",
             });
+
             user.token = token;
             user.password = undefined;
 
-            //Create cookie and send response
+            // Create cookie and send response
             const options = {
                 expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
                 httpOnly: true,
             };
+
+            log(
+                `Login successful for user with email ${email}`,
+                "/api/v1/auth/login"
+            );
+
             res.cookie("token", token, options).status(200).json({
                 success: true,
                 message: "Logged in successfully",
@@ -210,13 +231,17 @@ exports.login = async (req, res) => {
                 user,
             });
         } else {
+            log(
+                `Login failed: invalid credentials for email ${email}`,
+                "/api/v1/auth/login"
+            );
             return res.status(401).json({
                 success: false,
                 message: "Invalid credentials",
             });
         }
     } catch (err) {
-        console.log("Error in logging in: ", err);
+        log(`Error during login process: ${err.message}`, "/api/v1/auth/login");
         res.status(500).json({
             success: false,
             message: "Error in logging in",

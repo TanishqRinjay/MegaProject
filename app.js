@@ -77,6 +77,27 @@ app.get("/", (req, res) => {
     });
 });
 
+app.get("/test-error", (req, res, next) => {
+    try {
+        // Deliberately throw an error
+        throw new Error("This is a test error");
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Global Error Handling Middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+
+    // Send a generic error response
+    res.status(500).json({
+        success: false,
+        message: "Something went wrong!",
+        error: err.message,
+    });
+});
+
 app.listen(PORT, (req, res) => {
     console.log(`App is running on port no. ${PORT}`);
 });
